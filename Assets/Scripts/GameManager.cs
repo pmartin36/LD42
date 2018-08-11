@@ -10,6 +10,8 @@ public class GameManager : Singleton<GameManager> {
 
 	public bool Paused { get; set; }
 	public Player Player;
+	public Scale Scale;
+	public Conveyor Conveyor;
 
 	public Dictionary<int, BoxStack> BoxStacks;
 
@@ -39,5 +41,13 @@ public class GameManager : Singleton<GameManager> {
 		
 	}
 
-
+	public void PlayerLost() {
+		var boxes = FindObjectsOfType<Box>();
+		foreach(Box b in boxes) {
+			b.Interactable = false;
+			b.StopSpawn = true;
+		}
+		Player.CanMove = false;
+		Conveyor.CanSpawn = false;
+	}
 }

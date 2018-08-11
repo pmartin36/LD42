@@ -24,6 +24,7 @@ public class Box : MonoBehaviour {
 
 	public bool Interactable = true;
 	public bool Spawning = true;
+	public bool StopSpawn = false;
 	public bool Carried = false;
 
 	private bool _isAirborn;
@@ -121,13 +122,16 @@ public class Box : MonoBehaviour {
 
 	IEnumerator MoveToStaging(Vector3 finalPosition, float speed) {
 		while(transform.position.y < finalPosition.y) {
+			if(StopSpawn) break;
 			transform.position += Time.deltaTime * Vector3.up * speed;
 			yield return new WaitForEndOfFrame();
 		}
 
-		var hit = Physics2D.Raycast(transform.position, Vector2.zero, 0, CollisionLayers);
-		Place(hit.collider?.GetComponent<Box>());
-		Spawning = false;
+		if(!StopSpawn) {
+			var hit = Physics2D.Raycast(transform.position, Vector2.zero, 0, CollisionLayers);
+			Place(hit.collider?.GetComponent<Box>());
+			Spawning = false;
+		}
 	}
 
 	private void FixedUpdate() {
@@ -162,6 +166,7 @@ public class Box : MonoBehaviour {
 		OutlineColor = Color.clear;
 		IsAirborn = true;
 		Carried = true;
+		GameManager.Instance.Scale.ReevaluateWeight();
 	}
 
 	public void Place(Box stack) {
@@ -188,6 +193,7 @@ public class Box : MonoBehaviour {
 		collider.enabled = true;
 		IsAirborn = false;
 		Carried = false;
+		GameManager.Instance.Scale.ReevaluateWeight();
 	}
 
 	public void Throw( Vector3 throwerMovement, Vector3 throwDirection ) {

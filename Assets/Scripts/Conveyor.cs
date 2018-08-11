@@ -13,15 +13,16 @@ public class Conveyor : MonoBehaviour {
 	private float LastBoxSpawnTime;
 
 	private float randomSpawn;
+	public bool CanSpawn = true;
 
 	// Use this for initialization
 	void Start () {
-		
+		GameManager.Instance.Conveyor = this;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(Time.time - LastBoxSpawnTime > (1 / Speed) * randomSpawn) {
+		if(CanSpawn && Time.time - LastBoxSpawnTime > (1 / Speed) * randomSpawn) {
 			//spawn
 			//choose spawn location
 			var spawnNormal = new Vector2(SpawnX[Random.Range(0, 3)], SpawnY);

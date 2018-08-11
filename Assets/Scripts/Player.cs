@@ -13,6 +13,8 @@ public class Player : MonoBehaviour {
 	private float targetSpeed;
 	private float currentSpeed;
 
+	public bool CanMove = true;
+
 	[SerializeField]
 	private LayerMask CollisionLayers;
 	[SerializeField]
@@ -38,7 +40,9 @@ public class Player : MonoBehaviour {
 	}
 
 	private void FixedUpdate() {
-		Move();
+		if( CanMove ) {
+			Move();
+		}
 	}
 
 	public void Move() {
