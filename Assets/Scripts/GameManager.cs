@@ -12,8 +12,13 @@ public class GameManager : Singleton<GameManager> {
 	public Player Player;
 	public Scale Scale;
 	public Conveyor Conveyor;
+	public SpeedDisplay SpeedDisplay;
 
+	public int BoxesPlaced;
 	public Dictionary<int, BoxStack> BoxStacks;
+
+	public GameOver GameOverScreen;
+	public BoxPlacedCounter BoxPlacedCounter;
 
 	public void Awake() {
 		BoxStacks = new Dictionary<int, BoxStack>();
@@ -41,6 +46,12 @@ public class GameManager : Singleton<GameManager> {
 		
 	}
 
+	public void BoxDisplaced(int diff) {
+		BoxesPlaced = Mathf.Max(0, BoxesPlaced + diff);
+		Scale.ReevaluateWeight();
+		BoxPlacedCounter.UpdateCount(BoxesPlaced);
+	}
+
 	public void PlayerLost() {
 		var boxes = FindObjectsOfType<Box>();
 		foreach(Box b in boxes) {
@@ -49,5 +60,9 @@ public class GameManager : Singleton<GameManager> {
 		}
 		Player.CanMove = false;
 		Conveyor.CanSpawn = false;
+
+		BoxPlacedCounter.gameObject.SetActive(false);
+
+		GameOverScreen.SetScreen();
 	}
 }

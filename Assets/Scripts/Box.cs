@@ -51,7 +51,7 @@ public class Box : MonoBehaviour {
 		}
 	}
 
-	private BoxCollider2D collider;
+	public BoxCollider2D collider;
 
 	[SerializeField]
 	private LayerMask CollisionLayers;
@@ -114,22 +114,22 @@ public class Box : MonoBehaviour {
 		
 	}
 
-	public void Spawn(Vector3 finalPosition, float speed) {
+	public void Spawn(Vector3 finalPosition) {
 		collider.enabled = false;
 		IsAirborn = true;
-		StartCoroutine(MoveToStaging(finalPosition, speed));
+		StartCoroutine(MoveToStaging(finalPosition));
 	}
 
-	IEnumerator MoveToStaging(Vector3 finalPosition, float speed) {
+	IEnumerator MoveToStaging(Vector3 finalPosition) {
 		while(transform.position.y < finalPosition.y) {
 			if(StopSpawn) break;
-			transform.position += Time.deltaTime * Vector3.up * speed;
+			transform.position += Time.deltaTime * Vector3.up * GameManager.Instance.Conveyor.Speed / 2f;
 			yield return new WaitForEndOfFrame();
 		}
 
 		if(!StopSpawn) {
 			var hit = Physics2D.Raycast(transform.position, Vector2.zero, 0, CollisionLayers);
-			Place(hit.collider?.GetComponent<Box>());
+			Place(hit.collider?.GetComponent<Box>(), false);
 			Spawning = false;
 		}
 	}
@@ -166,10 +166,12 @@ public class Box : MonoBehaviour {
 		OutlineColor = Color.clear;
 		IsAirborn = true;
 		Carried = true;
-		GameManager.Instance.Scale.ReevaluateWeight();
+
+		GameManager.Instance.BoxDisplaced(!StopSpawn ? 0 : -1);
+		StopSpawn = true;
 	}
 
-	public void Place(Box stack) {
+	public void Place(Box stack, bool countAsStacked = true) {
 		if(stack != null) {
 			// we're adding to a stack
 			var stackBox = stack.collider.GetComponent<Box>();
@@ -193,7 +195,8 @@ public class Box : MonoBehaviour {
 		collider.enabled = true;
 		IsAirborn = false;
 		Carried = false;
-		GameManager.Instance.Scale.ReevaluateWeight();
+
+		GameManager.Instance.BoxDisplaced(countAsStacked ? 1 : 0);
 	}
 
 	public void Throw( Vector3 throwerMovement, Vector3 throwDirection ) {

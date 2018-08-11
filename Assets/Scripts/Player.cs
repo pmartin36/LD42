@@ -49,6 +49,15 @@ public class Player : MonoBehaviour {
 		currentSpeed = Mathf.SmoothDamp(currentSpeed, targetSpeed, ref cv, 0.1f);
 		RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, collider.radius, moveDirection, currentSpeed, CollisionLayers);
 
+		if(CarriedBox != null) {
+			RaycastHit2D[] boxhits = Physics2D.BoxCastAll(	transform.position, 
+															CarriedBox.collider.bounds.size, 
+															CarriedBox.transform.rotation.eulerAngles.z,
+															moveDirection,
+															currentSpeed,
+															1 << LayerMask.NameToLayer("Wall"));
+		}
+
 		if(hits.Length > 0) {
 			// valid collision
 			currentSpeed = targetSpeed = 0;//((hits[0].point - (Vector2)transform.position)*collider.radius).magnitude;
