@@ -11,8 +11,15 @@ public class GameManager : Singleton<GameManager> {
 	public bool Paused { get; set; }
 	public Player Player;
 
-	public void Awake() {
+	public Dictionary<int, BoxStack> BoxStacks;
 
+	public void Awake() {
+		BoxStacks = new Dictionary<int, BoxStack>();
+	}
+
+	public void Start () {
+		//create initial box stacks
+		//var boxes = FindObjectsOfType<Box>();
 	}
 
 	public void ProcessInputs(InputPackage p) {

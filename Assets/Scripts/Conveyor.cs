@@ -24,17 +24,18 @@ public class Conveyor : MonoBehaviour {
 		if(Time.time - LastBoxSpawnTime > (1 / Speed) * randomSpawn) {
 			//spawn
 			//choose spawn location
-			var spawnNormal = new Vector2(SpawnX[Random.Range(0, 2)], SpawnY);
-			var random = new Vector2(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f));
+			var spawnNormal = new Vector2(SpawnX[Random.Range(0, 3)], SpawnY);
+			var random = new Vector2(Random.Range(-0.15f, 0.15f), Random.Range(-0.05f, 0.05f));
 			var position = spawnNormal + random;
 
 			//choose box type
-			var boxPrefab = BoxPrefabs[ Random.Range(0,2) ];
+			var boxPrefab = BoxPrefabs[ Random.Range(0,3) ];
 
-			Box b = Instantiate(boxPrefab, position, Quaternion.Euler(0,0,Random.Range(0f,360f)));	
-			b.Spawn( new Vector2( random.x, -2f + random.y), Speed/10f ); // -2f is the normal ending spot
+			Box b = Instantiate(boxPrefab, position, Quaternion.Euler(0,0,Random.Range(0,360)));	
+			b.Spawn( new Vector2( random.x, -2f + random.y), Speed/2f ); // -2f is the normal ending spot
 
-			randomSpawn = Random.Range(3f, 5f);
+			randomSpawn = Random.Range(5f, 8f);
+			LastBoxSpawnTime = Time.time;
 		}		
 	}
 }

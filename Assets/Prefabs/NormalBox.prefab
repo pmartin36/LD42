@@ -111,9 +111,11 @@ MonoBehaviour:
   Weight: 2
   Stackability: 2
   Throwable: 1
-  IsAirborn: 0
   ThrowSpeedModifier: 1
   MovespeedModifier: 0.8
+  BoxNum: -1
+  StackIndex: 0
+  Interactable: 1
   CollisionLayers:
     serializedVersion: 2
     m_Bits: 3840

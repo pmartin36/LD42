@@ -63,20 +63,25 @@ public class Player : MonoBehaviour {
 
 		bool canPickup = false;
 
-		var boxRay = Physics2D.RaycastAll(p.MouseLocation, Vector2.one, 0, BoxHighlingLayers)
-						.FirstOrDefault( g => g.collider != null && g.collider.gameObject != CarriedBox?.gameObject);
-		if (boxRay.collider != null) {
-			var mousedBox = boxRay.collider.GetComponent<Box>();
+		var box = Physics2D.RaycastAll(p.MouseLocation, Vector2.one, 0, BoxHighlingLayers)
+						.Where( g => g.collider != null && g.collider.gameObject != CarriedBox?.gameObject)
+						.Select( g => g.collider.GetComponent<Box>() )
+						.FirstOrDefault( g => g.Interactable );
+
+		if (box != null) {
+			var mousedBox = box;
 			if(mousedBox != null && !mousedBox.IsAirborn) {
 				if (highlightedBox != mousedBox) {
 					if (highlightedBox != null) highlightedBox.OutlineColor = Color.clear;
 					highlightedBox = mousedBox;
 				}
-				canPickup = Vector2.Distance(transform.position, highlightedBox.transform.position) < 1.25f;
+				if(CarriedBox != null) {
+					canPickup = Vector2.Distance(CarriedBox.transform.position, highlightedBox.transform.position) < 0.3f;
+				}
+				else {
+					canPickup = Vector2.Distance(transform.position, highlightedBox.transform.position) < 1.25f;
+				}	
 				highlightedBox.OutlineColor = canPickup ? Color.green : Color.red;
-			}
-			else {
-				//var mousedBoxTower = boxRay.collider.GetComponent<BoxTower>();
 			}
 		}
 		else {
@@ -102,7 +107,7 @@ public class Player : MonoBehaviour {
 			}
 			else if(p.MouseClick == MouseInput.LEFT) {
 				//place box
-				CarriedBox.Place(boxRay);
+				CarriedBox.Place(box);
 				CarriedBox = null;
 			}		
 		}
