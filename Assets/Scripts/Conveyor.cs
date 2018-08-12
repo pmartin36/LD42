@@ -18,16 +18,24 @@ public class Conveyor : MonoBehaviour {
 	private float lastSpeedChange;
 	private float startTime;
 
+	private SpriteRenderer spriteRenderer;
+	private float offset;
+
 	// Use this for initialization
 	void Start () {
 		GameManager.Instance.Conveyor = this;
 		lastSpeedChange = Time.time - 5f;
 		LastBoxSpawnTime = Time.time + 2f;
 		startTime = Time.time;
+
+		spriteRenderer = GetComponent<SpriteRenderer>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		offset += CanSpawn ? Speed / 5f * Time.deltaTime : 0;
+		spriteRenderer.material.SetFloat("_Offset", -offset);
+
 		if(CanSpawn && Time.time - LastBoxSpawnTime > randomSpawn) {
 			//spawn
 			//choose spawn location

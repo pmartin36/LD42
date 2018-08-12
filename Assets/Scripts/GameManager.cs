@@ -67,6 +67,7 @@ public class GameManager : Singleton<GameManager> {
 		}
 		Player.CanMove = false;
 		Conveyor.CanSpawn = false;
+		BoxStacks.Clear();
 
 		BoxPlacedCounter.gameObject.SetActive(false);
 		Menu = true;

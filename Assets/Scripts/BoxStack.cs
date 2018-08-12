@@ -7,37 +7,39 @@ using System.Threading.Tasks;
 
 public class BoxStack : Stack<Box> {
 	public new void Push (Box b) {
-		b.spriteRenderer.sortingOrder = this.Count + 1;
-		
-		if(this.Count > 0) {
-			var currentTop = base.Pop();
-			currentTop.Interactable = false;
+		if(b != null) {
+			b.spriteRenderer.sortingOrder = this.Count + 1;
 
-			if(!currentTop.Stackable) {
-				// can't stack on fragile boxes
+			if (this.Count > 0) {
+				var currentTop = base.Pop();
+				currentTop.Interactable = false;
+
+				if (currentTop != null && !currentTop.Stackable) {
+					// can't stack on fragile boxes
+					GameManager.Instance.PlayerLost();
+
+					//play crush fragile box animation
+
+				}
+
+				base.Push(currentTop);
+			}
+
+			base.Push(b);
+
+			if (this.Count > 3) {
+				// can't stack 4 high
 				GameManager.Instance.PlayerLost();
 
-				//play crush fragile box animation
+				//play crush box animation
 
 			}
 
-			base.Push(currentTop);
-		}
-
-		base.Push(b);
-
-		if(this.Count > 3) {
-			// can't stack 4 high
-			GameManager.Instance.PlayerLost();
-
-			//play crush box animation
-
-		}
-
-		// remove entry from boxstacks dictionary if exists
-		var boxstacks = GameManager.Instance.BoxStacks;
-		if (boxstacks.ContainsKey(b.BoxNum) && boxstacks[b.BoxNum].Count < 1) {
-			boxstacks.Remove(b.BoxNum);
+			// remove entry from boxstacks dictionary if exists
+			var boxstacks = GameManager.Instance.BoxStacks;
+			if (boxstacks.ContainsKey(b.BoxNum) && boxstacks[b.BoxNum].Count < 1) {
+				boxstacks.Remove(b.BoxNum);
+			}
 		}
 	}
 
