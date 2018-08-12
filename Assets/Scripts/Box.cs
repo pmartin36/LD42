@@ -65,13 +65,13 @@ public class Box : MonoBehaviour {
 
 	private void InStack() {
 		// this is the base of the stack
-		if(BoxNum == StackIndex) {
+		if(!GameManager.Instance.BoxStacks.ContainsKey(StackIndex)) {
 			CreateNewBoxStack();
 		}
 		else {		
 			var stack = GameManager.Instance.BoxStacks[StackIndex];
 			var tempStack = new Stack<Box>();
-			while ( stack.Peek().BoxNum < this.BoxNum ) {
+			while ( stack.Count > 0 && stack.Peek().BoxNum > this.BoxNum ) {
 				tempStack.Push(stack.Pop());
 			}
 			GameManager.Instance.BoxStacks[StackIndex].Push(this);
@@ -121,7 +121,8 @@ public class Box : MonoBehaviour {
 	}
 
 	IEnumerator MoveToStaging(Vector3 finalPosition) {
-		while(transform.position.y < finalPosition.y) {
+		spriteRenderer.sortingOrder = 9;
+		while (transform.position.y < finalPosition.y) {
 			if(StopSpawn) break;
 			transform.position += Time.deltaTime * Vector3.up * GameManager.Instance.Conveyor.Speed / 2f;
 			yield return new WaitForEndOfFrame();
@@ -143,10 +144,18 @@ public class Box : MonoBehaviour {
 
 			var hits = Physics2D.BoxCastAll(transform.position, transform.localScale, transform.localRotation.z, movement, movement.magnitude, CollisionLayers);
 			if(hits.Length > 0) {
+				Debug.Log(movement.sqrMagnitude);
+				if (!Throwable) {
+					if (movement.sqrMagnitude > 0.007f) {
+						//play glass crashing sound
+						GameManager.Instance.PlayerLost();
+					}
+				}
+
 				var dec = 0.3f;
 				var abs = Mathf.Abs(hits[0].normal.x) > Mathf.Abs(hits[0].normal.y) ? new Vector2(-dec, dec) : new Vector2(dec, -dec);
 				movement *= abs;
-				cv *= abs;
+				cv *= abs;		
 			}
 
 			transform.position += movement;
@@ -169,6 +178,8 @@ public class Box : MonoBehaviour {
 
 		GameManager.Instance.BoxDisplaced(!StopSpawn ? 0 : -1);
 		StopSpawn = true;
+
+		spriteRenderer.sortingOrder = 10;
 	}
 
 	public void Place(Box stack, bool countAsStacked = true) {
@@ -200,10 +211,6 @@ public class Box : MonoBehaviour {
 	}
 
 	public void Throw( Vector3 throwerMovement, Vector3 throwDirection ) {
-		if(!Throwable) {
-			// play sound - can't throw
-			return;
-		}
 		IsAirborn = true;
 		movement = (throwerMovement + (throwDirection * ThrowSpeedModifier * Random.Range(8f, 10f))) * Time.fixedDeltaTime;
 		rotation = Random.Range(-90f, 90f) * Time.fixedDeltaTime;
