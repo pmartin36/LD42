@@ -21,6 +21,8 @@ public class Conveyor : MonoBehaviour {
 	private SpriteRenderer spriteRenderer;
 	private float offset;
 
+	AudioSource audio;
+
 	// Use this for initialization
 	void Start () {
 		GameManager.Instance.Conveyor = this;
@@ -29,12 +31,19 @@ public class Conveyor : MonoBehaviour {
 		startTime = Time.time;
 
 		spriteRenderer = GetComponent<SpriteRenderer>();
+		audio = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		offset += CanSpawn ? Speed / 5f * Time.deltaTime : 0;
-		spriteRenderer.material.SetFloat("_Offset", -offset);
+		if(CanSpawn) {		
+			offset += Speed / 6f * Time.deltaTime;
+			spriteRenderer.material.SetFloat("_Offset", -offset);
+			audio.pitch = Mathf.Lerp(1f, 1.85f, (Speed/10f)-1f);
+		}
+		else {
+			audio.mute = true;
+		}
 
 		if(CanSpawn && Time.time - LastBoxSpawnTime > randomSpawn) {
 			//spawn
@@ -49,7 +58,7 @@ public class Conveyor : MonoBehaviour {
 			Box b = Instantiate(boxPrefab, position, Quaternion.Euler(0,0,Random.Range(0,360)));	
 			b.Spawn( new Vector2( random.x, -2f + random.y) ); // -2f is the normal ending spot
 
-			randomSpawn = Random.Range(5f, 8f) * (1/Mathf.Pow(Speed, 0.75f));
+			randomSpawn = Random.Range(4f, 6f) * (1/Mathf.Pow(Speed, 0.5f));
 			LastBoxSpawnTime = Time.time;
 		}	
 		

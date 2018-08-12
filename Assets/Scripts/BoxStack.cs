@@ -16,7 +16,7 @@ public class BoxStack : Stack<Box> {
 
 				if (currentTop != null && !currentTop.Stackable) {
 					// can't stack on fragile boxes
-					GameManager.Instance.PlayerLost();
+					GameManager.Instance.PlayerLost("You broke a fragile box!");
 
 					//play crush fragile box animation
 
@@ -29,7 +29,7 @@ public class BoxStack : Stack<Box> {
 
 			if (this.Count > 3) {
 				// can't stack 4 high
-				GameManager.Instance.PlayerLost();
+				GameManager.Instance.PlayerLost("You stacked boxes too high!");
 
 				//play crush box animation
 

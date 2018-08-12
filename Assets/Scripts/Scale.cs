@@ -29,7 +29,7 @@ public class Scale : MonoBehaviour {
 		display.text = $"{value} kg";
 
 		if(value > 15) {
-			GameManager.Instance.PlayerLost();
+			GameManager.Instance.PlayerLost("You broke the scale!");
 		}
 	}
 }

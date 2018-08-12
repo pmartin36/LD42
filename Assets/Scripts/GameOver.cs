@@ -9,6 +9,7 @@ public class GameOver : MonoBehaviour {
 	public TMP_Text amtStacked;
 	public TMP_Text score;
 	public TMP_Text directions;
+	public TMP_Text lossReason;
 
 	public Image background;
 
@@ -23,21 +24,25 @@ public class GameOver : MonoBehaviour {
 		
 	}
 
-	public void SetScreen() {
+	public void SetScreen(string lossstring) {
 		int boxesPlaced = GameManager.Instance.BoxesPlaced;
-		amtStacked.text = $"You stacked {boxesPlaced} boxes";
-		if( boxesPlaced < 75 ) {
+		amtStacked.text = $"Stacked\n{boxesPlaced} boxes";
+
+		if( boxesPlaced < 25 ) {
 			score.text = "Subpar Stacker";
 		}
-		else if(boxesPlaced < 150) {
+		else if(boxesPlaced < 75) {
 			score.text = "Standard Stacker";
 		}
-		else if(boxesPlaced < 225) {
+		else if(boxesPlaced < 125) {
 			score.text = "Super Stacker";
 		}
 		else {
 			score.text = "Spectacular Stacker";
 		}
+
+		lossReason.text = lossstring;
+
 		GetComponent<Animator>().Play("GameOver");
 	}
 }

@@ -59,12 +59,13 @@ public class GameManager : Singleton<GameManager> {
 		BoxPlacedCounter.UpdateCount(BoxesPlaced);
 	}
 
-	public void PlayerLost() {
+	public void PlayerLost(string reason) {
 		var boxes = FindObjectsOfType<Box>();
 		foreach(Box b in boxes) {
 			b.Interactable = false;
 			b.StopSpawn = true;
 		}
+		Box.BoxAudioManager?.PlayBroke();
 		Player.CanMove = false;
 		Conveyor.CanSpawn = false;
 		BoxStacks.Clear();
@@ -72,6 +73,6 @@ public class GameManager : Singleton<GameManager> {
 		BoxPlacedCounter.gameObject.SetActive(false);
 		Menu = true;
 
-		GameOverScreen.SetScreen();
+		GameOverScreen.SetScreen(reason);
 	}
 }

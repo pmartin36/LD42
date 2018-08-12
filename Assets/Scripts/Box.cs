@@ -27,6 +27,8 @@ public class Box : MonoBehaviour {
 	public bool StopSpawn = false;
 	public bool Carried = false;
 
+	public static BoxAudioManager BoxAudioManager;
+
 	private bool _isAirborn;
 	public bool IsAirborn {
 		get {
@@ -107,6 +109,10 @@ public class Box : MonoBehaviour {
 			BoxesCreated++;
 			InStack();
 		}
+
+		if(BoxAudioManager == null) {
+			BoxAudioManager = FindObjectOfType<BoxAudioManager>();
+		}
 	}
 	
 	// Update is called once per frame
@@ -124,7 +130,7 @@ public class Box : MonoBehaviour {
 		spriteRenderer.sortingOrder = 9;
 		while (transform.position.y < finalPosition.y) {
 			if(StopSpawn) break;
-			transform.position += Time.deltaTime * Vector3.up * GameManager.Instance.Conveyor.Speed / 2f;
+			transform.position += Time.deltaTime * Vector3.up * Mathf.Pow(GameManager.Instance.Conveyor.Speed, 0.9f) / 2f;
 			yield return new WaitForEndOfFrame();
 		}
 
@@ -148,7 +154,7 @@ public class Box : MonoBehaviour {
 				if (!Throwable) {
 					if (movement.sqrMagnitude > 0.007f) {
 						//play glass crashing sound
-						GameManager.Instance.PlayerLost();
+						GameManager.Instance.PlayerLost("You broke a fragile box!");
 					}
 				}
 
@@ -163,7 +169,7 @@ public class Box : MonoBehaviour {
 
 			if (movement.magnitude < 0.01f) {
 				movement = Vector3.zero;
-				Place(null);
+				Place(null, playSound: false);
 			}
 		}
 	}
@@ -182,7 +188,7 @@ public class Box : MonoBehaviour {
 		spriteRenderer.sortingOrder = 10;
 	}
 
-	public void Place(Box stack, bool countAsStacked = true) {
+	public void Place(Box stack, bool countAsStacked = true, bool playSound = true) {
 		if(stack != null) {
 			// we're adding to a stack
 			var stackBox = stack.collider.GetComponent<Box>();
@@ -208,6 +214,9 @@ public class Box : MonoBehaviour {
 		Carried = false;
 
 		GameManager.Instance.BoxDisplaced(countAsStacked ? 1 : 0);
+
+		if(playSound)
+			BoxAudioManager.PlayBoxPlaced();
 	}
 
 	public void Throw( Vector3 throwerMovement, Vector3 throwDirection ) {
