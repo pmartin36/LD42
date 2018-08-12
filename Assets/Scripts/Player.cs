@@ -25,8 +25,11 @@ public class Player : MonoBehaviour {
 
 	private Box highlightedBox;
 
+	Animator anim;
+
 	private void Awake() {
 		collider = GetComponent<CircleCollider2D>();
+		anim = GetComponent<Animator>();
 	}
 
 	// Use this for initialization
@@ -39,6 +42,9 @@ public class Player : MonoBehaviour {
 		if (CarriedBox != null) {		
 			CarriedBox.spriteRenderer.color = CarriedBoxPositionValid() ? Color.white : Color.red;
 		}
+
+		anim.SetFloat("Movement", currentSpeed);
+		anim.SetBool("Carrying", CarriedBox != null);
 	}
 
 	public bool CarriedBoxPositionValid() {
@@ -76,6 +82,17 @@ public class Player : MonoBehaviour {
 
 		bool canPickup = false;
 
+		var direction = ((Vector3)p.MouseLocation - transform.position).normalized;
+		if( Mathf.Abs(direction.x) > Mathf.Abs(direction.y) ) {
+			this.transform.localRotation = Quaternion.Euler(0,0, 90f * Mathf.Sign(direction.x));
+			anim.SetBool("Reverse", Mathf.Sign(direction.x) * moveDirection.x < 0);
+		}
+		else {
+			this.transform.localRotation = Quaternion.Euler(0, 0, direction.y < 0 ? 0 : 180);
+			anim.SetBool("Reverse", Mathf.Sign(direction.y) * moveDirection.y < 0);
+		}
+
+
 		var box = Physics2D.RaycastAll(p.MouseLocation, Vector2.one, 0, BoxHighlingLayers)
 						.Where( g => g.collider != null && g.collider.gameObject != CarriedBox?.gameObject)
 						.Select( g => g.collider.GetComponent<Box>() )
@@ -112,7 +129,8 @@ public class Player : MonoBehaviour {
 			}
 		}
 		else {
-			CarriedBox.transform.localPosition = ((Vector3)p.MouseLocation - transform.position).normalized * carriedBoxDistance;
+			CarriedBox.transform.localPosition = transform.position + ((Vector3)p.MouseLocation - transform.position).normalized * carriedBoxDistance;
+			
 			if(CarriedBoxPositionValid()) {
 				if (p.MouseClick == MouseInput.RIGHT) {
 					// throw box

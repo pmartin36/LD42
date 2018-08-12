@@ -176,7 +176,7 @@ public class Box : MonoBehaviour {
 
 	public void PickedUp(Transform picker) {
 		GameManager.Instance.BoxStacks[StackIndex].Pop();
-		this.transform.parent = picker;
+		//this.transform.parent = picker;
 		collider.enabled = false;
 		OutlineColor = Color.clear;
 		IsAirborn = true;
