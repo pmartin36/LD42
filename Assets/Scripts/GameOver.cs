@@ -33,7 +33,7 @@ public class GameOver : MonoBehaviour {
 			score.text = "Standard Stacker";
 		}
 		else if(boxesPlaced < 225) {
-			score.text = "Stupendous Stacker";
+			score.text = "Super Stacker";
 		}
 		else {
 			score.text = "Spectacular Stacker";

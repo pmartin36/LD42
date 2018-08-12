@@ -6,7 +6,7 @@ using UnityEngine;
 public class Box : MonoBehaviour {
 
 	public int Weight;
-	public int Stackability;
+	public bool Stackable;
 
 	public bool Throwable;
 	public float ThrowSpeedModifier;

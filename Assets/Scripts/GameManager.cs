@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(InputManager))]
 public class GameManager : Singleton<GameManager> {
 
-	public bool Paused { get; set; }
+	public bool Menu { get; set; }
 	public Player Player;
 	public Scale Scale;
 	public Conveyor Conveyor;
@@ -20,18 +20,25 @@ public class GameManager : Singleton<GameManager> {
 	public GameOver GameOverScreen;
 	public BoxPlacedCounter BoxPlacedCounter;
 
+
 	public void Awake() {
 		BoxStacks = new Dictionary<int, BoxStack>();
 	}
 
 	public void Start () {
-		//create initial box stacks
-		//var boxes = FindObjectsOfType<Box>();
+
 	}
 
 	public void ProcessInputs(InputPackage p) {
-		if(Paused) {
+		if(p.Quit) {
+			Application.Quit();
+		}
+
+		if(Menu) {
 			// do something
+			if(p.Enter) {
+				FindObjectOfType<Blackout>().LevelOut();
+			}
 		}
 		else {
 			Player.ProcessInputs(p);
@@ -62,6 +69,7 @@ public class GameManager : Singleton<GameManager> {
 		Conveyor.CanSpawn = false;
 
 		BoxPlacedCounter.gameObject.SetActive(false);
+		Menu = true;
 
 		GameOverScreen.SetScreen();
 	}

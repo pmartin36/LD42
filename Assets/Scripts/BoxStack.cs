@@ -13,9 +13,26 @@ public class BoxStack : Stack<Box> {
 			var currentTop = base.Pop();
 			currentTop.Interactable = false;
 
+			if(!currentTop.Stackable) {
+				// can't stack on fragile boxes
+				GameManager.Instance.PlayerLost();
+
+				//play crush fragile box animation
+
+			}
+
 			base.Push(currentTop);
 		}
+
 		base.Push(b);
+
+		if(this.Count > 3) {
+			// can't stack 4 high
+			GameManager.Instance.PlayerLost();
+
+			//play crush box animation
+
+		}
 
 		// remove entry from boxstacks dictionary if exists
 		var boxstacks = GameManager.Instance.BoxStacks;

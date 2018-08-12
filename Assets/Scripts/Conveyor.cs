@@ -22,6 +22,7 @@ public class Conveyor : MonoBehaviour {
 	void Start () {
 		GameManager.Instance.Conveyor = this;
 		lastSpeedChange = Time.time - 5f;
+		LastBoxSpawnTime = Time.time + 2f;
 		startTime = Time.time;
 	}
 	

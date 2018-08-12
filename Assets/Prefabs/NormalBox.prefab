@@ -109,13 +109,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Weight: 2
-  Stackability: 2
+  Stackable: 1
   Throwable: 1
   ThrowSpeedModifier: 1
   MovespeedModifier: 0.8
   BoxNum: -1
   StackIndex: 0
   Interactable: 1
+  Spawning: 1
+  StopSpawn: 0
+  Carried: 0
+  spriteRenderer: {fileID: 0}
+  collider: {fileID: 0}
   CollisionLayers:
     serializedVersion: 2
     m_Bits: 3840

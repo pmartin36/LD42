@@ -36,8 +36,17 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+		if (CarriedBox != null) {		
+			CarriedBox.spriteRenderer.color = CarriedBoxPositionValid() ? Color.white : Color.red;
+		}
 	}
+
+	public bool CarriedBoxPositionValid() {
+		return Physics2D.OverlapBoxAll(	CarriedBox.transform.position,
+										new Vector2(0.5f,0.5f),
+										CarriedBox.transform.rotation.eulerAngles.z,
+										1 << LayerMask.NameToLayer("Wall")).Length < 1;
+}
 
 	private void FixedUpdate() {
 		if( CanMove ) {
@@ -48,15 +57,6 @@ public class Player : MonoBehaviour {
 	public void Move() {
 		currentSpeed = Mathf.SmoothDamp(currentSpeed, targetSpeed, ref cv, 0.1f);
 		RaycastHit2D[] hits = Physics2D.CircleCastAll(transform.position, collider.radius, moveDirection, currentSpeed, CollisionLayers);
-
-		if(CarriedBox != null) {
-			RaycastHit2D[] boxhits = Physics2D.BoxCastAll(	transform.position, 
-															CarriedBox.collider.bounds.size, 
-															CarriedBox.transform.rotation.eulerAngles.z,
-															moveDirection,
-															currentSpeed,
-															1 << LayerMask.NameToLayer("Wall"));
-		}
 
 		if(hits.Length > 0) {
 			// valid collision
@@ -113,16 +113,18 @@ public class Player : MonoBehaviour {
 		}
 		else {
 			CarriedBox.transform.localPosition = ((Vector3)p.MouseLocation - transform.position).normalized * carriedBoxDistance;
-			if (p.MouseClick == MouseInput.RIGHT) {
-				// throw box
-				CarriedBox.Throw( moveDirection * currentSpeed, ((Vector3)p.MouseLocation - transform.position).normalized  );
-				CarriedBox = null;
-			}
-			else if(p.MouseClick == MouseInput.LEFT) {
-				//place box
-				CarriedBox.Place(box);
-				CarriedBox = null;
-			}		
+			if(CarriedBoxPositionValid()) {
+				if (p.MouseClick == MouseInput.RIGHT) {
+					// throw box
+					CarriedBox.Throw( moveDirection * currentSpeed, ((Vector3)p.MouseLocation - transform.position).normalized  );
+					CarriedBox = null;
+				}
+				else if(p.MouseClick == MouseInput.LEFT) {
+					//place box
+					CarriedBox.Place(box);
+					CarriedBox = null;
+				}
+			}	
 		}
 	}
 }

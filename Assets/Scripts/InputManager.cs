@@ -14,6 +14,9 @@ public class InputPackage {
 
 	public MouseInput MouseClick { get; set; }
 	public Vector2 MouseLocation { get; set; }
+
+	public bool Quit { get; set; }
+	public bool Enter { get; set; }
 }
 
 public class InputManager : MonoBehaviour {
@@ -40,6 +43,9 @@ public class InputManager : MonoBehaviour {
 			package.MouseClick = MouseInput.NONE;
 		}
 		package.MouseLocation = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+		package.Quit = Input.GetButtonDown("Exit");
+		package.Enter = Input.GetButtonDown("Enter");
 
 		GameManager.Instance.ProcessInputs(package);
 	}
